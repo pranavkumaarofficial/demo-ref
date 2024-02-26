@@ -4,7 +4,7 @@ import os
 import subprocess
 
 def main():
-    st.title("HL7 Sender Application ")
+    st.title("HL7 Sender Application 🩺🏥")
 
     # Radio button for choosing input method
     input_method = st.sidebar.radio("Choose Input Method:", ("Upload HL7 File", "Enter Text"))
