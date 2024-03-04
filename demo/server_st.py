@@ -19,7 +19,7 @@ def handle_client(conn, address):
             print("from connected user " + str(address) + ": " + str(data))
             #st.code(f"Received: {str(data)}")
             #st.write("Got it ")
-            result_queue.put(f"Received: {str(data)}")
+            result_queue.put(f"Received from {str(address)}:\n {str(data)}")
             # Add the received data to the message queue for Streamlit
             #message_queue.put(f"Received from {str(address)}: {str(data)}")
 
@@ -84,6 +84,8 @@ def streamlit_frontend():
                 result = result_queue.get()
                 st.sidebar.code(message)
                 st.code(result)
+                #st.write(result)
+                #st.text_area("Output", result, height=200, max_chars=None)
 
 if __name__ == '__main__':
     streamlit_frontend()
