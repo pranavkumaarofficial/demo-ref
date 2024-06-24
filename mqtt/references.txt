@@ -1,0 +1,2 @@
+https://cedalo.com/blog/how-to-install-mosquitto-mqtt-broker-on-windows/
+
