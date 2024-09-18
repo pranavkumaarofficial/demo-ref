@@ -145,26 +145,30 @@ def sign_csr(csr_path, signer_key_path):
 
 # Function to validate certificate chain
 def validate_cert(ca_cert_path, client_cert_path, intermediate_cert_path=None):
-    # Load CA certificate
-    with open(ca_cert_path, "rb") as f:
-        ca_cert = x509.load_pem_x509_certificate(f.read(), default_backend())
+    # Prepare OpenSSL command for certificate verification
+    command = [
+        "openssl", "verify", "-CAfile", ca_cert_path
+    ]
+    
+    if intermediate_cert_path:
+        # Add intermediate certificate if provided
+        command.extend(["-untrusted", intermediate_cert_path])
+    
+    # Append the client certificate to be verified
+    command.append(client_cert_path)
 
-    # Load client certificate
-    with open(client_cert_path, "rb") as f:
-        client_cert = x509.load_pem_x509_certificate(f.read(), default_backend())
-
-    # Validate the certificate chain
     try:
-        client_cert.public_key().verify(
-            client_cert.signature,
-            client_cert.tbs_certificate_bytes,
-            padding.PKCS1v15(),
-            client_cert.signature_hash_algorithm,
-        )
-        return "Chain of Trust: PASS"
+        # Run the OpenSSL command
+        result = subprocess.run(command, capture_output=True, text=True)
+        
+        # Check if verification passed
+        if result.returncode == 0:
+            return "Chain of Trust: PASS"
+        else:
+            return f"Chain of Trust: FAIL ({result.stderr.strip()})"
+    
     except Exception as e:
-        return f"Chain of Trust: FAIL ({e})"
-
+        return f"An error occurred: {str(e)}"
 # Streamlit UI
 st.title("Certificate Management App")
 
